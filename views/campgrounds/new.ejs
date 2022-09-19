@@ -8,19 +8,30 @@
                 <input
                     class="form-control"
                     type="text"
-                    nam="campground[title]"
                     id="title"
+                    name="campground[title]"
                     required
                 />
                 <div class="valid-feedback">Looks good!</div>
             </div>
             <div class="mb-3">
-                <label class="form-label" for="location">Locations</label>
+                <label class="form-label" for="location">Location</label>
                 <input
                     class="form-control"
                     type="text"
-                    name="campground[location]"
                     id="location"
+                    name="campground[location]"
+                    required
+                />
+                <div class="valid-feedback">Looks good!</div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="image">Image Url</label>
+                <input
+                    class="form-control"
+                    type="text"
+                    id="image"
+                    name="campground[image]"
                     required
                 />
                 <div class="valid-feedback">Looks good!</div>
@@ -32,41 +43,30 @@
                     <input
                         type="text"
                         class="form-control"
+                        id="price"
                         placeholder="0.00"
                         aria-label="price"
                         aria-describedby="price-label"
-                        id="price"
                         name="campground[price]"
                         required
                     />
-                    <div class="valid-feedback">Looks good!</div>
                 </div>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label" for="image">Image URL</label>
-                <input
-                    class="form-control"
-                    type="text"
-                    name="campground[image]"
-                    id="image"
-                    required
-                />
                 <div class="valid-feedback">Looks good!</div>
             </div>
+
             <div class="mb-3">
                 <label class="form-label" for="description">Description</label>
                 <textarea
                     class="form-control"
                     type="text"
-                    name="campground[description]"
                     id="description"
+                    name="campground[description]"
                     required
                 ></textarea>
                 <div class="valid-feedback">Looks good!</div>
             </div>
             <div class="mb-3">
-                <button class="btn btn-primary">Add Campground</button>
+                <button class="btn btn-success">Add Campground</button>
             </div>
         </form>
         <a href="/campgrounds">All Campgrounds</a>
