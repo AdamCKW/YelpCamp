@@ -10,6 +10,8 @@ const mongoose = require('mongoose');
 const engine = require('ejs-mate');
 // Catch async function for error handling.
 const catchAsync = require('./utils/catchAsync');
+// Returns a ExpressError.
+const ExpressError = require('./utils/ExpressError');
 // Requires method-override to use PUT/USE.
 const methodOverride = require('method-override');
 // Requires the Campground Scheme Model.
@@ -31,7 +33,7 @@ const app = express();
 
 app.engine('ejs', engine); // ejs engine.
 app.set('view engine', 'ejs'); // Sets the view engine.
-app.set('views', path.join(__dirname, 'views')); // Sets the views directory.
+app.set('views', path.join(__dirname, 'views')); // Sets the views directory [/view/].
 app.use(express.urlencoded({ extended: true })); // Allow receiving data from POST
 app.use(methodOverride('_method')); // Overrides the default method to use _method.
 
@@ -58,6 +60,7 @@ app.get('/campgrounds/new', (req, res, next) => {
 app.post(
     '/campgrounds',
     catchAsync(async (req, res, next) => {
+        if (!req.body.campground) throw new ExpressError('Invalid Campground Data', 400);
         const campground = await Campground(req.body.campground);
         await campground.save();
         res.redirect(`campgrounds/${campground._id}`);
@@ -104,8 +107,18 @@ app.delete(
     })
 );
 
+// If page doesn't exist, show error
+app.all('*', (req, res, next) => {
+    next(new ExpressError('Page Not Found', 404));
+});
+
+// Error Handler.
 app.use((err, req, res, next) => {
-    res.send('Oh boy, something went wrong!');
+    // Default error message
+    const { status = 500 } = err;
+    if (!err.message) err.message = 'Oh No, Something Went Wrong!';
+    // Renders the error page
+    res.status(status).render('error', { err });
 });
 
 // Start listening on a given port.
