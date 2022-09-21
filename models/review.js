@@ -1,9 +1,11 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose'); // Sets the mongoose constant.
+const Schema = mongoose.Schema; // Sets the mongoose.Schema.
 
+// Creates a new instance of the reviewSchema
 const reviewSchema = new Schema({
     body: String,
     rating: Number,
 });
 
+// Sets the exports for the review model.
 module.exports = mongoose.model('Review', reviewSchema);

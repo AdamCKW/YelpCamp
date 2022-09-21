@@ -1,6 +1,6 @@
 <% layout('/layouts/boilerplate') %>
 <div class="row">
-    <div class="col-6 offset-3">
+    <div class="col-md-6">
         <div class="card mb-3">
             <img src="<%= campground.image %>" class="card-img-top" alt="..." />
             <div class="card-body">
@@ -23,13 +23,20 @@
                     <button class="btn btn-danger">Delete</button>
                 </form>
             </div>
-            <div class="card-footer">
-                2 days ago
-                <a href="/campgrounds">All Campgrounds</a>
-            </div>
+            <div class="card-footer">2 days ago</div>
         </div>
+    </div>
+
+    <!-- CAMPGROUND REVIEW SECTION ENDS -->
+    <div class="col-md-6">
+        <!-- ADD REVIEW FORM START -->
         <h2>Leave a Review</h2>
-        <form action="">
+        <form
+            class="validated-form mb-4 pb-4 border-bottom"
+            action="/campgrounds/<%= campground._id %>/reviews"
+            method="post"
+            novalidate
+        >
             <div class="mb-3">
                 <label class="form-label" for="rating">Rating</label>
                 <input
@@ -49,9 +56,67 @@
                     id="body"
                     cols="30"
                     rows="10"
+                    required
                 ></textarea>
+                <div class="valid-feedback">Looks good!</div>
             </div>
             <button class="btn btn-success">Submit</button>
         </form>
+        <!-- ADD REVIEW FORM END -->
+
+        <!-- CAMPGROUND REVIEWS LIST START -->
+        <% for( let review of campground.reviews ) { %>
+        <div class="mb-4 pb-4 border-bottom">
+            <div class="d-flex justify-content-between mb-3">
+                <div class="d-flex align-items-center pe-2">
+                    <!--TODO: User Image -->
+                    <div
+                        class="flex-shrink-0 bg-repeat-0 bg-position-center bg-size-cover rounded-circle me-3"
+                    >
+                        <img
+                            style="width: 48px; height: 48px"
+                            src="https://previews.123rf.com/images/caiquame/caiquame2101/caiquame210100429/163283955-blank-man-profile-head-icon-placeholder.jpg"
+                            alt=""
+                        />
+                    </div>
+                    <div>
+                        <!--TODO: User Name -->
+                        <h6 class="fs-base mb-0">Annette Black</h6>
+                        <span class="star-rating">
+                            <!-- Creates Rating Stars -->
+                            <% for( let i = 0; i < review.rating ; i++ ) { %>
+                            <i class="fa-solid fa-star text-warning"></i>
+                            <% } %>
+                            <!-- Creates Blank Stars -->
+                            <% for( let i = 5; i > review.rating; i-- ) { %>
+                            <i class="fa-regular fa-star text-muted"></i>
+                            <% } %>
+                        </span>
+                    </div>
+                </div>
+                <span class="fs-sm text-muted">Jan 17, 2021</span>
+            </div>
+
+            <!-- REVIEW BODY TEXT STARTS -->
+            <div class="pb-1 mb-3"><%= review.body %></div>
+            <!-- REVIEW BODY TEXT ENDS -->
+
+            <!-- DELETE REVIEW FORM START-->
+            <div class="d-flex align-items-center">
+                <form
+                    action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=Delete"
+                    method="POST"
+                >
+                    <button class="btn btn-sm btn-danger">
+                        <i class="fa-solid fa-trash"></i>
+                        <span>Delete</span>
+                    </button>
+                </form>
+            </div>
+            <!-- DELETE REVIEW FORM END-->
+        </div>
+        <% } %>
+        <!-- CAMPGROUND REVIEWS LIST ENDS -->
     </div>
+    <!-- CAMPGROUND REVIEW SECTION ENDS -->
 </div>

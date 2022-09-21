@@ -3,11 +3,13 @@ const port = 3000; // Sets the express port to 3000
 const path = require('path'); // Requires a path.
 const mongoose = require('mongoose'); // Require the Mongoose Package.
 const engine = require('ejs-mate'); // Requires ejs-mate engine.
-const { campgroundSchema } = require('./schemas.js'); // Requires Joi Schema
+const { campgroundSchema, reviewSchema } = require('./schemas.js'); // Requires Joi Schema
 const catchAsync = require('./utils/catchAsync'); // Catch async function for error handling.
 const ExpressError = require('./utils/ExpressError'); // Returns a ExpressError.
 const methodOverride = require('method-override'); // Requires method-override to use PUT/USE.
+// * Mongoose/Mongo JSON Schema
 const Campground = require('./models/campground'); // Requires the Campground Scheme Model.
+const Review = require('./models/review'); // Requires the Review Scheme Model.
 
 // Establishes a connection to MongoDB.
 mongoose
@@ -29,12 +31,30 @@ app.set('views', path.join(__dirname, 'views')); // Sets the views directory [/v
 app.use(express.urlencoded({ extended: true })); // Allow receiving data from POST
 app.use(methodOverride('_method')); // Overrides the default method to use _method.
 
+// Validate a campground request.
 const validateCampground = (req, res, next) => {
+    // Validate the body of the request.
     const { error } = campgroundSchema.validate(req.body);
+    // Throws an ExpressError if there is an error.
     if (error) {
         const msg = error.details.map((el) => el.message).join(',');
         throw new ExpressError(msg, 400);
     } else {
+        // Proceed if no error.
+        next();
+    }
+};
+
+// Validate a review request.
+const validateReview = (req, res, next) => {
+    // Validate the body of the request.
+    const { error } = reviewSchema.validate(req.body);
+    // Throws an ExpressError if there is an error.
+    if (error) {
+        const msg = error.details.map((el) => el.message).join(',');
+        throw new ExpressError(msg, 400);
+    } else {
+        // Proceed if no error
         next();
     }
 };
@@ -74,7 +94,7 @@ app.post(
 app.get(
     '/campgrounds/:id',
     catchAsync(async (req, res) => {
-        const campground = await Campground.findById(req.params.id);
+        const campground = await Campground.findById(req.params.id).populate('reviews');
         res.render('campgrounds/show', { campground });
     })
 );
@@ -106,6 +126,40 @@ app.delete(
         const { id } = req.params;
         await Campground.findByIdAndDelete(id);
         res.redirect('/campgrounds');
+    })
+);
+
+// Create a campground review.
+app.post(
+    '/campgrounds/:id/reviews',
+    validateReview,
+    catchAsync(async (req, res) => {
+        // Find a Campground by ID.
+        const campground = await Campground.findById(req.params.id);
+        // Creates a new Review object.
+        const review = new Review(req.body.review);
+        // Adds a review to the campground.
+        campground.reviews.push(review);
+        // Saves the review and campground to the database.
+        await review.save();
+        await campground.save();
+        // Redirect to the campground.
+        res.redirect(`/campgrounds/${campground._id}`);
+    })
+);
+
+// Delete a campground review
+app.delete(
+    '/campgrounds/:id/reviews/:reviewId',
+    catchAsync(async (req, res) => {
+        // Destructure req.params into review id and reviewId
+        const { id, reviewId } = req.params;
+        // Finds the campground & the specific review id in the array and removes it
+        await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+        // Finds a review by id and deletes it.
+        await Review.findByIdAndDelete(reviewId);
+        // Redirect to the Campground page.
+        res.redirect(`/campgrounds/${id}`);
     })
 );
 
