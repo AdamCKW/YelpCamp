@@ -7,7 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": {
+    "name": "Adam Chong Karr Weng",
+    "email": "Adamkwchong@gmail.com"
+  },
   "license": "ISC",
   "dependencies": {
     "connect-flash": "^0.1.1",
