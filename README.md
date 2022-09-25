@@ -17,14 +17,7 @@
 
 ![Node](https://img.shields.io/badge/node-v16.16.0-green)
 ![NPM](https://img.shields.io/badge/npm-v8.11.0-green)
-![EJS](https://img.shields.io/badge/ejs-v3.1.8-green)
-![EJS-Mate](https://img.shields.io/badge/ejs--mate-v4.0.0-green)
 ![Express](https://img.shields.io/badge/express-v4.18.1-green)
-
-![Express-Session](https://img.shields.io/badge/express--session-v1.17.3-green)
-![JOI](https://img.shields.io/badge/joi-v17.6.0-green)
-![Method-Override](https://img.shields.io/badge/method--override-v3.0.0-green)
-![Mongoose](https://img.shields.io/badge/mongoose-v6.6.1-green)
 
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/AdamCKW/YelpCamp/graphs/commit-activity)
 [![Website](https://img.shields.io/website-down-up-red-green/http/shields.io.svg)]()
@@ -133,4 +126,3 @@ MongoDB use as Database.
 ### Starting MongoDB
 
 Run `mongod` in another terminal and mongosh to use MongoDB.
-
