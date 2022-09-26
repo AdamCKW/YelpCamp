@@ -1,4 +1,5 @@
 <% layout('/layouts/boilerplate') %>
+<link rel="stylesheet" href="/stylesheets/starability-basic.css" />
 <section class="py-5">
     <!--* CAMPGROUND CONTENT -->
     <div class="container my-5">
@@ -7,6 +8,7 @@
                 <img class="card-img-top mb-5 mb-md-0" src="<%= campground.image %>" alt="..." />
             </div>
             <div class="col-md-5">
+                <!--  -->
                 <!-- *Author Name -->
                 <div class="small mb-1 text-capitalize">
                     Submitted By <%= campground.author.username %>
@@ -19,9 +21,8 @@
                 <div class="fs-5 mb-5">
                     <span class="fw-bold fs-3">$<%= campground.price %></span><span>/Night</span>
                 </div>
-
                 <!-- *Campground Description -->
-                <p class="lead"><%= campground.description %></p>
+                <div><p class="lead text-break"><%= campground.description %></p></div>
 
                 <% if (currentUser && campground.author.equals(currentUser._id)) { %>
 
@@ -51,6 +52,7 @@
             </div>
         </div>
     </div>
+
     <!--* CAMPGROUND REVIEW SECTION STARTS -->
     <div class="container">
         <div class="row">
@@ -59,6 +61,7 @@
                 <!-- ADD REVIEW START -->
                 <h2 class="h4 pb-3">Leave a Review</h2>
                 <p class="text-muted"><%= campground.reviews.length %> User Reviews</p>
+
                 <!-- Add Review Button trigger modal -->
                 <div class="mb-4 pb-4 border-bottom">
                     <button
@@ -72,12 +75,16 @@
                 </div>
                 <!-- ADD REVIEW END -->
             </div>
+
+            <!--* IF NOT LOGGED IN -->
             <% } else { %>
             <div class="col-md-4">
                 <h2 class="h4 pb-3">Leave a Review</h2>
                 <p class="font-monospace"><%= campground.reviews.length %> User Reviews</p>
                 <div class="mb-4 pb-4 border-bottom underline">
-                    <p class="fst-italic text-decoration-underline">Login to leave a Review</p>
+                    <a href="/login" class="btn-link fst-italic text-decoration-underline"
+                        >Login to leave a Review</a
+                    >
                 </div>
             </div>
 
@@ -99,24 +106,16 @@
                                 />
                             </div>
                             <div>
-                                <h6 class="fs-base mb-0 text-capitalize">
+                                <h5 class="fs-base mb-0 text-capitalize">
                                     <%= review.author.username %>
-                                </h6>
-                                <span class="star-rating">
-                                    <!-- Creates Rating Stars -->
-                                    <% for( let i = 0; i < review.rating ; i++ ) { %>
-                                    <i class="fa-solid fa-star text-warning"></i>
-                                    <% } %>
-                                    <!-- Creates Blank Stars -->
-                                    <% for( let i = 5; i > review.rating; i-- ) { %>
-                                    <i class="fa-regular fa-star text-muted"></i>
-                                    <% } %>
-                                </span>
+                                </h5>
+                                <p class="starability-result" data-rating="<%= review.rating %>">
+                                    Rated: <%= review.rating %> stars
+                                </p>
                             </div>
                         </div>
                         <span class="fs-sm text-muted">Jan 17, 2021</span>
                     </div>
-
                     <!-- REVIEW BODY TEXT STARTS -->
                     <div class="pb-1"><%= review.body %></div>
                     <!-- REVIEW BODY TEXT ENDS -->
@@ -158,7 +157,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header d-block position-relative border-0 pb-0 px-sm-5 px-4">
-                <h3 class="modal-title mt-4 text-center" id="reviewModalTitle">Leave a review</h3>
+                <h3 class="modal-title mt-4 text-center" id="reviewModalTitle">Leave a Review</h3>
                 <button
                     type="button"
                     class="btn-close position-absolute top-0 end-0 mt-3 me-3"
@@ -174,16 +173,30 @@
                     novalidate
                 >
                     <div class="mb-3">
-                        <label class="form-label" for="rating">Rating</label>
-                        <input
-                            class="form-range"
-                            type="range"
-                            min="1"
-                            max="5"
-                            name="review[rating]"
-                            id="rating"
-                        />
+                        <fieldset class="starability-basic">
+                            <legend>Rating</legend>
+                            <input
+                                type="radio"
+                                id="no-rate"
+                                class="input-no-rate"
+                                name="review[rating]"
+                                value="1"
+                                checked
+                                aria-label="No rating."
+                            />
+                            <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+                            <label for="first-rate1" title="Terrible">1 star</label>
+                            <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+                            <label for="first-rate2" title="Not good">2 stars</label>
+                            <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+                            <label for="first-rate3" title="Average">3 stars</label>
+                            <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+                            <label for="first-rate4" title="Very good">4 stars</label>
+                            <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+                            <label for="first-rate5" title="Amazing">5 stars</label>
+                        </fieldset>
                     </div>
+
                     <div class="mb-3">
                         <label class="form-label" for="body">Review</label>
                         <textarea
