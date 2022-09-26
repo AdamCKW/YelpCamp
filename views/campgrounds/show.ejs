@@ -4,9 +4,46 @@
     <!--* CAMPGROUND CONTENT -->
     <div class="container my-5">
         <div class="row gx-4 gx-lg-5 align-items-center">
+            <!-- *Campground Image Section -->
             <div class="col-md-7">
-                <img class="card-img-top mb-5 mb-md-0" src="<%= campground.image %>" alt="..." />
+                <div id="carouselImageControls" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <% campground.images.forEach((img, i) => { %>
+                        <div class="carousel-item <%= i === 0 ? 'active' : ''%>">
+                            <img
+                                class="d-block w-100"
+                                src="<%= img.url %>"
+                                alt="<%= campground.title %>_img_<%= i+1 %>"
+                            />
+                        </div>
+                        <% }) %>
+                    </div>
+
+                    <!--* Carousel Controls -->
+                    <% if (campground.images.length > 1) { %>
+                    <button
+                        class="carousel-control-prev"
+                        type="button"
+                        data-bs-target="#carouselImageControls"
+                        data-bs-slide="prev"
+                    >
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button
+                        class="carousel-control-next"
+                        type="button"
+                        data-bs-target="#carouselImageControls"
+                        data-bs-slide="next"
+                    >
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                    <% } %>
+                    <!--* Carousel Controls ENDS -->
+                </div>
             </div>
+            <!--* Campground Image Section End -->
             <div class="col-md-5">
                 <!--  -->
                 <!-- *Author Name -->

@@ -16,13 +16,16 @@ module.exports.renderNewForm = (req, res) => {
 /* This is a function that creates a new campground. */
 module.exports.createCampground = async (req, res, next) => {
     /* Creating a new campground with the data from the form. */
+    /* Taking the files that were uploaded and storing them in the images array. */
     /* Setting the author of the campground to the user that is logged in. */
     /* Saving the campground to the database. */
     /* Flash message that is displayed to the user when they create a new campground. */
     /* Redirecting the user to the show page of the campground that they just created. */
     const campground = new Campground(req.body.campground);
+    campground.images = req.files.map((f) => ({ url: f.path, filename: f.filename }));
     campground.author = req.user._id;
     await campground.save();
+    console.log(campground);
     req.flash('success', 'Successfully created a new campground!');
     res.redirect(`/campgrounds/${campground._id}`);
 };
@@ -70,9 +73,16 @@ module.exports.renderEditForm = async (req, res) => {
 module.exports.updateCampground = async (req, res) => {
     /* Destructuring the id from the req.params object. */
     /* Finding the campground by id and updating it with the new data. */
+    /* Taking the files that were uploaded and storing them in the images array. */
+    /* Pushing the images that were uploaded to the images array. */
+    /* Saving the campground to the database. */
     /* Flash message that is displayed to the user when they update a campground. */
     /* Redirecting the user to the show page of the campground that they just created. */
     const { id } = req.params;
+    const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground });
+    const imgs = req.files.map((f) => ({ url: f.path, filename: f.filename }));
+    campground.images.push(...imgs);
+    await campground.save();
     req.flash('success', 'Successfully updated the campground!');
     res.redirect(`/campgrounds/${campground._id}`);
 };

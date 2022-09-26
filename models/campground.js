@@ -5,7 +5,7 @@ const Schema = mongoose.Schema; // Get the mongoose schema.
 // Creates a new instance of the CampgroundSchema
 const CampgroundSchema = new Schema({
     title: String,
-    image: String,
+    images: [{ url: String, filename: String }],
     price: Number,
     description: String,
     location: String,
