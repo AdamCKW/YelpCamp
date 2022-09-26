@@ -4,36 +4,12 @@ const express = require('express');
 option is set to true so that the request parameters from the campgrounds route will be available in
 the reviews route. */
 const router = express.Router({ mergeParams: true });
-/* Importing the catchAsync and ExpressError functions from the utils folder. */
+/* Importing the catchAsync and Middleware functions from the utils folder. */
 const catchAsync = require('../utils/catchAsync');
-const ExpressError = require('../utils/ExpressError');
-/* Importing the JOI campgroundSchema from the schemas.js file. */
-const { reviewSchema } = require('../schemas.js');
+const { validateReview, isLoggedIn, isReviewAuthor } = require('../utils/middleware');
 /* Importing the Campground and Review models from the models folder. */
 const Campground = require('../models/campground');
 const Review = require('../models/review');
-
-/**
- * @function catchAsync - Catching any errors that may occur in the async function
- */
-
-/**
- * It takes in a request, response, and next function, and then validates the request body against the
- * reviewSchema. If there is an error, it throws an ExpressError with the message from the error. If
- * there is no error, it calls the next function.
- * @param req - the request object
- * @param res - the response object
- * @param next - a function that will be called when the middleware is complete.
- */
-const validateReview = (req, res, next) => {
-    const { error } = reviewSchema.validate(req.body);
-    if (error) {
-        const msg = error.details.map((el) => el.message).join(',');
-        throw new ExpressError(msg, 400);
-    } else {
-        next();
-    }
-};
 
 /* This is a post request that is being sent to the server to [CREATE] a new review. 
 -Finding the campground by the id that is in the request parameters. 
@@ -44,10 +20,12 @@ const validateReview = (req, res, next) => {
 */
 router.post(
     '/',
+    isLoggedIn,
     validateReview,
     catchAsync(async (req, res) => {
         const campground = await Campground.findById(req.params.id);
         const review = new Review(req.body.review);
+        review.author = req.user._id;
         campground.reviews.push(review);
         await review.save();
         await campground.save();
@@ -64,6 +42,8 @@ router.post(
 */
 router.delete(
     '/:reviewId',
+    isLoggedIn,
+    isReviewAuthor,
     catchAsync(async (req, res) => {
         const { id, reviewId } = req.params;
         await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });

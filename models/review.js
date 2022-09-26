@@ -5,6 +5,10 @@ const Schema = mongoose.Schema; // Sets the mongoose.Schema.
 const reviewSchema = new Schema({
     body: String,
     rating: Number,
+    author: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+    },
 });
 
 // Sets the exports for the review model.

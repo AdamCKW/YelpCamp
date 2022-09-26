@@ -1,122 +1,204 @@
 <% layout('/layouts/boilerplate') %>
-<div class="row">
-    <div class="col-md-6">
-        <div class="card mb-3">
-            <img src="<%= campground.image %>" class="card-img-top" alt="..." />
-            <div class="card-body">
-                <h5 class="card-title"><%= campground.title %></h5>
-                <p class="card-text"><%= campground.description %></p>
+<section class="py-5">
+    <!--* CAMPGROUND CONTENT -->
+    <div class="container my-5">
+        <div class="row gx-4 gx-lg-5 align-items-center">
+            <div class="col-md-7">
+                <img class="card-img-top mb-5 mb-md-0" src="<%= campground.image %>" alt="..." />
             </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item text-muted"><%= campground.location %></li>
-                <li class="list-group-item">$<%= campground.price %>/night</li>
-            </ul>
-            <div class="card-body">
-                <a href="/campgrounds/<%= campground._id %>/edit" class="card-link btn btn-warning">
-                    Edit
-                </a>
-                <form
-                    class="d-inline"
-                    action="/campgrounds/<%= campground._id %>?_method=DELETE"
-                    method="post"
-                >
-                    <button class="btn btn-danger">Delete</button>
-                </form>
-            </div>
-            <div class="card-footer">2 days ago</div>
-        </div>
-    </div>
+            <div class="col-md-5">
+                <!-- *Author Name -->
+                <div class="small mb-1 text-capitalize">
+                    Submitted By <%= campground.author.username %>
+                </div>
 
-    <!-- CAMPGROUND REVIEW SECTION ENDS -->
-    <div class="col-md-6">
-        <!-- ADD REVIEW FORM START -->
-        <h2>Leave a Review</h2>
-        <form
-            class="validated-form mb-4 pb-4 border-bottom"
-            action="/campgrounds/<%= campground._id %>/reviews"
-            method="post"
-            novalidate
-        >
-            <div class="mb-3">
-                <label class="form-label" for="rating">Rating</label>
-                <input
-                    class="form-range"
-                    type="range"
-                    min="1"
-                    max="5"
-                    name="review[rating]"
-                    id="rating"
-                />
-            </div>
-            <div class="mb-3">
-                <label class="form-label" for="body">Review</label>
-                <textarea
-                    class="form-control"
-                    name="review[body]"
-                    id="body"
-                    cols="30"
-                    rows="10"
-                    required
-                ></textarea>
-                <div class="valid-feedback">Looks good!</div>
-            </div>
-            <button class="btn btn-success">Submit</button>
-        </form>
-        <!-- ADD REVIEW FORM END -->
+                <!-- *Campground Title -->
+                <h1 class="display-5 fw-bolder text-capitalize"><%= campground.title %></h1>
 
-        <!-- CAMPGROUND REVIEWS LIST START -->
-        <% for( let review of campground.reviews ) { %>
-        <div class="mb-4 pb-4 border-bottom">
-            <div class="d-flex justify-content-between mb-3">
-                <div class="d-flex align-items-center pe-2">
-                    <!--TODO: User Image -->
-                    <div
-                        class="flex-shrink-0 bg-repeat-0 bg-position-center bg-size-cover rounded-circle me-3"
-                    >
-                        <img
-                            style="width: 48px; height: 48px"
-                            src="https://previews.123rf.com/images/caiquame/caiquame2101/caiquame210100429/163283955-blank-man-profile-head-icon-placeholder.jpg"
-                            alt=""
-                        />
+                <!-- *Campground Price -->
+                <div class="fs-5 mb-5">
+                    <span class="fw-bold fs-3">$<%= campground.price %></span><span>/Night</span>
+                </div>
+
+                <!-- *Campground Description -->
+                <p class="lead"><%= campground.description %></p>
+
+                <% if (currentUser && campground.author.equals(currentUser._id)) { %>
+
+                <!-- *EDIT AND DELETE BUTTON -->
+                <div class="d-flex">
+                    <div class="px-1">
+                        <a
+                            class="btn btn-outline-dark flex-shrink-0"
+                            href="/campgrounds/<%= campground._id %>/edit"
+                            ><i class="fa-solid fa-pen-to-square"></i>
+                            Edit
+                        </a>
                     </div>
-                    <div>
-                        <!--TODO: User Name -->
-                        <h6 class="fs-base mb-0">Annette Black</h6>
-                        <span class="star-rating">
-                            <!-- Creates Rating Stars -->
-                            <% for( let i = 0; i < review.rating ; i++ ) { %>
-                            <i class="fa-solid fa-star text-warning"></i>
-                            <% } %>
-                            <!-- Creates Blank Stars -->
-                            <% for( let i = 5; i > review.rating; i-- ) { %>
-                            <i class="fa-regular fa-star text-muted"></i>
-                            <% } %>
-                        </span>
+                    <div class="px-1">
+                        <form
+                            class="d-inline"
+                            action="/campgrounds/<%= campground._id %>?_method=DELETE"
+                            method="post"
+                        >
+                            <button class="btn btn-outline-danger flex-shrink-0">
+                                <i class="fa-solid fa-trash"></i> Delete
+                            </button>
+                        </form>
                     </div>
                 </div>
-                <span class="fs-sm text-muted">Jan 17, 2021</span>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    <!--* CAMPGROUND REVIEW SECTION STARTS -->
+    <div class="container">
+        <div class="row">
+            <% if (currentUser) { %>
+            <div class="col-md-4">
+                <!-- ADD REVIEW START -->
+                <h2 class="h4 pb-3">Leave a Review</h2>
+                <p class="text-muted"><%= campground.reviews.length %> User Reviews</p>
+                <!-- Add Review Button trigger modal -->
+                <div class="mb-4 pb-4 border-bottom">
+                    <button
+                        type="button"
+                        class="btn btn-outline-primary mb-sm-0 mb-3"
+                        data-bs-toggle="modal"
+                        data-bs-target="#reviewModal"
+                    >
+                        Add Review
+                    </button>
+                </div>
+                <!-- ADD REVIEW END -->
+            </div>
+            <% } else { %>
+            <div class="col-md-4">
+                <h2 class="h4 pb-3">Leave a Review</h2>
+                <p class="font-monospace"><%= campground.reviews.length %> User Reviews</p>
+                <div class="mb-4 pb-4 border-bottom underline">
+                    <p class="fst-italic text-decoration-underline">Login to leave a Review</p>
+                </div>
             </div>
 
-            <!-- REVIEW BODY TEXT STARTS -->
-            <div class="pb-1 mb-3"><%= review.body %></div>
-            <!-- REVIEW BODY TEXT ENDS -->
+            <% } %>
 
-            <!-- DELETE REVIEW FORM START-->
-            <div class="d-flex align-items-center">
+            <div class="col-md-8">
+                <!-- CAMPGROUND REVIEWS LIST START -->
+                <% for( let review of campground.reviews ) { %>
+                <div class="mb-4 pb-4 border-bottom">
+                    <div class="d-flex justify-content-between mb-3">
+                        <div class="d-flex align-items-center pe-2">
+                            <!--TODO: User Image -->
+                            <div class="flex-shrink-0 me-3">
+                                <img
+                                    class="rounded-circle"
+                                    style="width: 48px; height: 48px"
+                                    src="https://dummyimage.com/600x400/000/fff.png"
+                                    alt=""
+                                />
+                            </div>
+                            <div>
+                                <h6 class="fs-base mb-0 text-capitalize">
+                                    <%= review.author.username %>
+                                </h6>
+                                <span class="star-rating">
+                                    <!-- Creates Rating Stars -->
+                                    <% for( let i = 0; i < review.rating ; i++ ) { %>
+                                    <i class="fa-solid fa-star text-warning"></i>
+                                    <% } %>
+                                    <!-- Creates Blank Stars -->
+                                    <% for( let i = 5; i > review.rating; i-- ) { %>
+                                    <i class="fa-regular fa-star text-muted"></i>
+                                    <% } %>
+                                </span>
+                            </div>
+                        </div>
+                        <span class="fs-sm text-muted">Jan 17, 2021</span>
+                    </div>
+
+                    <!-- REVIEW BODY TEXT STARTS -->
+                    <div class="pb-1"><%= review.body %></div>
+                    <!-- REVIEW BODY TEXT ENDS -->
+
+                    <% if (currentUser && review.author.equals(currentUser._id)) { %>
+                    <!-- DELETE REVIEW FORM START-->
+                    <div class="d-flex align-items-center mt-3">
+                        <form
+                            action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=Delete"
+                            method="POST"
+                        >
+                            <button class="btn btn-sm btn-danger">
+                                <i class="fa-solid fa-trash"></i>
+                                <span>Delete</span>
+                            </button>
+                        </form>
+                    </div>
+                    <!-- DELETE REVIEW FORM END-->
+                    <% } %>
+                </div>
+                <% } %>
+                <!-- CAMPGROUND REVIEWS LIST ENDS -->
+            </div>
+        </div>
+    </div>
+    <!--* CAMPGROUND REVIEW SECTION ENDS -->
+</section>
+
+<% if (currentUser) { %>
+<!-- Review Modal Form -->
+<div
+    class="modal fade"
+    id="reviewModal"
+    tabindex="-1"
+    aria-labelledby="reviewModalLabel"
+    aria-hidden="true"
+    role="dialog"
+>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header d-block position-relative border-0 pb-0 px-sm-5 px-4">
+                <h3 class="modal-title mt-4 text-center" id="reviewModalTitle">Leave a review</h3>
+                <button
+                    type="button"
+                    class="btn-close position-absolute top-0 end-0 mt-3 me-3"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+            </div>
+            <div class="modal-body px-sm-5 px-4">
                 <form
-                    action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=Delete"
-                    method="POST"
+                    class="validated-form"
+                    action="/campgrounds/<%= campground._id %>/reviews"
+                    method="post"
+                    novalidate
                 >
-                    <button class="btn btn-sm btn-danger">
-                        <i class="fa-solid fa-trash"></i>
-                        <span>Delete</span>
-                    </button>
+                    <div class="mb-3">
+                        <label class="form-label" for="rating">Rating</label>
+                        <input
+                            class="form-range"
+                            type="range"
+                            min="1"
+                            max="5"
+                            name="review[rating]"
+                            id="rating"
+                        />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="body">Review</label>
+                        <textarea
+                            class="form-control"
+                            name="review[body]"
+                            id="body"
+                            rows="5"
+                            required
+                        ></textarea>
+                        <div class="valid-feedback">Looks good!</div>
+                    </div>
+                    <button class="btn btn-primary d-block w-100 mb-4">Submit a review</button>
                 </form>
             </div>
-            <!-- DELETE REVIEW FORM END-->
         </div>
-        <% } %>
-        <!-- CAMPGROUND REVIEWS LIST ENDS -->
     </div>
-    <!-- CAMPGROUND REVIEW SECTION ENDS -->
 </div>
+<% } %>

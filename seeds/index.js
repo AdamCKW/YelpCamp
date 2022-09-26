@@ -6,7 +6,7 @@ const cities = require('./cities');
 const { places, descriptors } = require('./seedHelpers');
 const Campground = require('../models/campground');
 
-// Establishes a connection to MongoDB.
+/* It establishes a connection to MongoDB. */
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -19,17 +19,22 @@ db.once('open', () => {
     console.log('Database Connected');
 });
 
-// Generates a random sample from the array.
+/**
+ * Return a random element from the given array.
+ * @param array - The array to sample from.
+ */
 const sample = (array) => array[Math.floor(Math.random() * array.length)];
 
+/**
+ * It creates 50 campgrounds, each with a random location, title, image, description, and price.
+ */
 const seedDB = async () => {
     await Campground.deleteMany({});
-    // Create a new campground.
     for (let i = 0; i < 50; i++) {
-        // Create a campground with a random city, state, title.
         const random1000 = Math.floor(Math.random() * 1000);
         const price = Math.floor(Math.random() * 20) + 10;
         const camp = new Campground({
+            author: '632ffeaaeddf0b8c1ef2ecda',
             location: `${cities[random1000].city}, ${cities[random1000].state}`,
             title: `${sample(descriptors)} ${sample(places)}`,
             image: 'https://source.unsplash.com/collection/483251',
@@ -41,6 +46,7 @@ const seedDB = async () => {
     }
 };
 
+/* Closing the connection to the database. */
 seedDB().then(() => {
     mongoose.connection.close();
 });
