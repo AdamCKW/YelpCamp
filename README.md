@@ -25,13 +25,13 @@
 
 </div>
 
-> Description of the website
+> TODO: Description of the website
 
 > The source code is open so that you can download the source code and set it up with ease if you would like to have your own exclusive environment.
 
 TODO: ADD GIF HERE
 
-## Page Screenshots
+## TODO: Page Screenshots
 
 | Syntax    | Description |
 | --------- | ----------- |
@@ -61,13 +61,13 @@ TODO: ADD GIF HERE
 
 ## What (Yelp-Camp) ?
 
-Yelp-Camp, is a website of primary made for campground reviews. Users can add and rate campgrounds. You need to have an account in order to review or create a campground. This project was a part of Colt Steele's web development course.
+Yelp-Camp, is a website of primary made for campground reviews. Users can add and rate campgrounds. You need to have an account in order to review or create a campground. This project was a part of Colt Steele's web development course 2022.
 
 ## Why (Yelp-Camp) ?
 
-### Example texxt
+### Example text
 
--   The app's responsive web interface helps you to browse file in any resolution device.
+-   The responsive web interface helps you to campground and reviews.
 -   You can use source code for your own projects.
 -   It works well in low bandwidth environments.
 
@@ -121,8 +121,29 @@ Go to `localhost:3000` to use the website at local environment.
 
 ## Database
 
-MongoDB use as Database.
+MongoDB is used as Database.
 
 ### Starting MongoDB
 
-Run `mongod` in another terminal and mongosh to use MongoDB.
+Run `mongod` in another terminal and `mongosh` to use MongoDB shell.
+
+## API
+
+### Cloudinary Storage API
+
+Create a `.env` file in the main directory.
+Add your API information in the newly created file.
+
+```
+CLOUDINARY_CLOUD_NAME= #your API Cloud Name
+CLOUDINARY_API_KEY= #your API Key
+CLOUDINARY_API_SECRET= #your API Secret
+```
+
+## How to tweak this project for your own uses
+
+Since this is a simple project, I would encourage you to clone and rename this project for your own purpose.
+
+## Find a bug?
+
+If you found an issue or would like to submit an improvement to this project, please submit an issue using the issues tab above. If you like to submit a PR with a fix, reference the issue you created.
