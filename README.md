@@ -21,7 +21,7 @@
 
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/AdamCKW/YelpCamp/graphs/commit-activity)
 [![Website](https://img.shields.io/website-down-up-red-green/http/shields.io.svg)]()
-[![GitHub license](https://img.shields.io/badge/license-ISC-blue.svg?style=flat-square)]()
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)]()
 
 </div>
 
