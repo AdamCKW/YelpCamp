@@ -5,7 +5,7 @@
     <div class="container my-5">
         <div class="row gx-4 gx-lg-5 align-items-center">
             <!-- *Campground Image Section -->
-            <div class="col-md-7">
+            <div class="col-12 col-md-7 mb-2">
                 <div id="carouselImageControls" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-inner">
                         <% campground.images.forEach((img, i) => { %>
@@ -44,7 +44,7 @@
                 </div>
             </div>
             <!--* Campground Image Section End -->
-            <div class="col-md-5">
+            <div class="col-12 col-md-5 mb-2">
                 <!--  -->
                 <!-- *Author Name -->
                 <div class="small mb-1 text-capitalize">
@@ -93,41 +93,72 @@
     <!--* CAMPGROUND REVIEW SECTION STARTS -->
     <div class="container">
         <div class="row">
-            <% if (currentUser) { %>
-            <div class="col-md-4">
+            <div class="col-12 col-md-4">
                 <!-- ADD REVIEW START -->
                 <h2 class="h4 pb-3">Leave a Review</h2>
                 <p class="text-muted"><%= campground.reviews.length %> User Reviews</p>
 
+                <div class="mb-8">
+                    <% for( let i = 4; i >= 0; i--) { %>
+                    <!-- * Rating Star Progress Bar-->
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="text-nowrap me-3 text-muted">
+                            <span class="d-inline-block align-middle text-muted"
+                                ><%= i + 1 %>
+                                <i class="fa-solid fa-star text-warning"></i>
+                            </span>
+                        </div>
+                        <div class="w-100">
+                            <div class="progress" style="height: 6px">
+                                <div
+                                    class="progress-bar bg-warning"
+                                    role="progressbar"
+                                    style="
+                                        width: <%= (ratingArray[i]/campground.reviews.length) * 100
+                                            %>%;
+                                    "
+                                    aria-valuenow="<%= ratingArray[i] %>"
+                                    aria-valuemin="0"
+                                    aria-valuemax="<%= campground.reviews.length %>"
+                                ></div>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-muted ms-3"
+                                ><%= (ratingArray[i]/campground.reviews.length) * 100 %>%</span
+                            >
+                        </div>
+                    </div>
+                    <% } %>
+                </div>
+
+                <% if (currentUser) { %>
                 <!-- Add Review Button trigger modal -->
                 <div class="mb-4 pb-4 border-bottom">
                     <button
                         type="button"
-                        class="btn btn-outline-primary mb-sm-0 mb-3"
+                        class="btn btn-outline-secondary d-block w-100 mb-4"
                         data-bs-toggle="modal"
                         data-bs-target="#reviewModal"
                     >
-                        Add Review
+                        Leave a Review
                     </button>
                 </div>
+
+                <!--* IF NOT LOGGED IN -->
+                <% } else { %>
+                <div class="mb-4 pb-4 border-bottom">
+                    <a class="btn btn-outline-secondary d-block w-100 mb-4" href="/login"
+                        >Leave a Review</a
+                    >
+                </div>
+
+                <% } %>
+
                 <!-- ADD REVIEW END -->
             </div>
 
-            <!--* IF NOT LOGGED IN -->
-            <% } else { %>
-            <div class="col-md-4">
-                <h2 class="h4 pb-3">Leave a Review</h2>
-                <p class="font-monospace"><%= campground.reviews.length %> User Reviews</p>
-                <div class="mb-4 pb-4 border-bottom underline">
-                    <a href="/login" class="btn-link fst-italic text-decoration-underline"
-                        >Login to leave a Review</a
-                    >
-                </div>
-            </div>
-
-            <% } %>
-
-            <div class="col-md-8">
+            <div class="col-12 col-md-8">
                 <!-- CAMPGROUND REVIEWS LIST START -->
                 <% for( let review of campground.reviews ) { %>
                 <div class="mb-4 pb-4 border-bottom">

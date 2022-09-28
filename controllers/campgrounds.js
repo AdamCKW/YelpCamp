@@ -50,7 +50,28 @@ module.exports.showCampground = async (req, res) => {
         req.flash('error', 'Campground not found!');
         res.redirect('/campgrounds');
     }
-    res.render('campgrounds/show', { campground });
+
+    let ratingArray = [0, 0, 0, 0, 0];
+    for (const review of campground.reviews) {
+        switch (review.rating) {
+            case 1:
+                ratingArray[0]++;
+                break;
+            case 2:
+                ratingArray[1]++;
+                break;
+            case 3:
+                ratingArray[2]++;
+                break;
+            case 4:
+                ratingArray[3]++;
+                break;
+            case 5:
+                ratingArray[4]++;
+                break;
+        }
+    }
+    res.render('campgrounds/show', { campground, ratingArray });
 };
 
 /* This is a function that renders the edit campground form. */
