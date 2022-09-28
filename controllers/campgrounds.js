@@ -1,4 +1,5 @@
 const Campground = require('../models/campground');
+const { cloudinary } = require('../cloudinary');
 
 /* This is a function that renders the index view with the campgrounds data. */
 module.exports.index = async (req, res) => {
@@ -25,7 +26,6 @@ module.exports.createCampground = async (req, res, next) => {
     campground.images = req.files.map((f) => ({ url: f.path, filename: f.filename }));
     campground.author = req.user._id;
     await campground.save();
-    console.log(campground);
     req.flash('success', 'Successfully created a new campground!');
     res.redirect(`/campgrounds/${campground._id}`);
 };
@@ -50,26 +50,11 @@ module.exports.showCampground = async (req, res) => {
         req.flash('error', 'Campground not found!');
         res.redirect('/campgrounds');
     }
-
+    console.log(req.body);
+    /* This is a function that is calculating the average rating of the campground. */
     let ratingArray = [0, 0, 0, 0, 0];
     for (const review of campground.reviews) {
-        switch (review.rating) {
-            case 1:
-                ratingArray[0]++;
-                break;
-            case 2:
-                ratingArray[1]++;
-                break;
-            case 3:
-                ratingArray[2]++;
-                break;
-            case 4:
-                ratingArray[3]++;
-                break;
-            case 5:
-                ratingArray[4]++;
-                break;
-        }
+        ratingArray[review.rating - 1]++;
     }
     res.render('campgrounds/show', { campground, ratingArray });
 };
@@ -97,13 +82,26 @@ module.exports.updateCampground = async (req, res) => {
     /* Taking the files that were uploaded and storing them in the images array. */
     /* Pushing the images that were uploaded to the images array. */
     /* Saving the campground to the database. */
+    /* Checking if the deleteImages array is not empty. If it is not empty, it will delete the
+    images that are in the deleteImages array. */
     /* Flash message that is displayed to the user when they update a campground. */
     /* Redirecting the user to the show page of the campground that they just created. */
     const { id } = req.params;
+    console.log(req.body);
     const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground });
     const imgs = req.files.map((f) => ({ url: f.path, filename: f.filename }));
     campground.images.push(...imgs);
     await campground.save();
+    /* This is checking if the deleteImages array is not empty. If it is not empty, it will delete the
+    images that are in the deleteImages array. */
+    if (req.body.deleteImages) {
+        for (let filename of req.body.deleteImages) {
+            await cloudinary.uploader.destroy(filename);
+        }
+        await campground.updateOne({
+            $pull: { images: { filename: { $in: req.body.deleteImages } } },
+        });
+    }
     req.flash('success', 'Successfully updated the campground!');
     res.redirect(`/campgrounds/${campground._id}`);
 };
