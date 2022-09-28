@@ -1,5 +1,11 @@
+/* This is requiring the Campground model. */
 const Campground = require('../models/campground');
+/* Destructuring the cloudinary object from the cloudinary.js file. */
 const { cloudinary } = require('../cloudinary');
+/* This is requiring the mapbox geocoding service and setting the access token. */
+const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
+const mapBoxToken = process.env.MAPBOX_TOKEN;
+const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 
 /* This is a function that renders the index view with the campgrounds data. */
 module.exports.index = async (req, res) => {
@@ -22,10 +28,19 @@ module.exports.createCampground = async (req, res, next) => {
     /* Saving the campground to the database. */
     /* Flash message that is displayed to the user when they create a new campground. */
     /* Redirecting the user to the show page of the campground that they just created. */
+
+    const geoData = await geocoder
+        .forwardGeocode({
+            query: req.body.campground.location,
+            limit: 1,
+        })
+        .send();
     const campground = new Campground(req.body.campground);
+    campground.geometry = geoData.body.features[0].geometry;
     campground.images = req.files.map((f) => ({ url: f.path, filename: f.filename }));
     campground.author = req.user._id;
     await campground.save();
+    console.log(campground);
     req.flash('success', 'Successfully created a new campground!');
     res.redirect(`/campgrounds/${campground._id}`);
 };
@@ -50,7 +65,6 @@ module.exports.showCampground = async (req, res) => {
         req.flash('error', 'Campground not found!');
         res.redirect('/campgrounds');
     }
-    console.log(req.body);
     /* This is a function that is calculating the average rating of the campground. */
     let ratingArray = [0, 0, 0, 0, 0];
     for (const review of campground.reviews) {
