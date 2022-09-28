@@ -33,10 +33,10 @@ TODO: ADD GIF HERE
 
 ## TODO: Page Screenshots
 
-| Syntax    | Description |
-| --------- | ----------- |
-| Header    | Title       |
-| Paragraph | Text        |
+| Page 1                                                   |                        Page 2                           |
+| -------------------------------------------------------- | ------------------------------------------------------------ |
+| <img src="https://dummyimage.com/600x400/000/fff.png">   | <img src= "https://dummyimage.com/600x400/000/fff.png">      |
+
 
 ## Folder Structure
 
