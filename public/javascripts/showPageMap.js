@@ -20,3 +20,6 @@ new mapboxgl.Marker()
         )
     )
     .addTo(map);
+
+/* Adding a navigation control to the map. */
+map.addControl(new mapboxgl.NavigationControl());
