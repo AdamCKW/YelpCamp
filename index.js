@@ -8,6 +8,7 @@ const path = require('path');
 const ejsMate = require('ejs-mate');
 
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const flash = require('connect-flash');
 
 const mongoose = require('mongoose');
@@ -26,9 +27,11 @@ const User = require('./models/user');
 
 const helmet = require('helmet');
 
+const dbURL = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
+
 /* Connecting to the database. */
 mongoose
-    .connect('mongodb://localhost:27017/yelp-camp', {
+    .connect(dbURL, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     })
@@ -45,10 +48,23 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 
+const secret = process.env.SECRET || 'this-is-secret';
+
+const store = MongoStore.create({
+    mongoUrl: dbURL,
+    secret,
+    touchAfter: 24 * 60 * 60,
+});
+
+store.on('error', function (e) {
+    console.log('SESSION STORE ERROR', e);
+});
+
 /* A configuration object for the session. */
 const sessionConfig = {
+    store,
     name: 'session',
-    secret: 'this-is-secret',
+    secret,
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -62,6 +78,7 @@ const sessionConfig = {
         maxAge: 1000 * 60 * 60 * 24 * 7,
     },
 };
+
 app.use(session(sessionConfig));
 app.use(flash());
 
